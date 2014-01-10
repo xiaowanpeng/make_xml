@@ -4,7 +4,7 @@ test.out: test.o make_xml.o
 test.o: test.cpp
 	g++ -c test.cpp
 
-make_xml.o: make_xml.cpp
+make_xml.o: make_xml.cpp make_xml.h
 	g++ -c make_xml.cpp
 
 clean:

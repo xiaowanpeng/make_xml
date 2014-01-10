@@ -15,7 +15,7 @@ int main()
     record.strValue = "2";
     tmpRecordList.push_back(record);
 
-    record.strPath = "a/e";
+    record.strPath = "a/c";
     record.strValue = "3";
     tmpRecordList.push_back(record);
 
@@ -25,6 +25,10 @@ int main()
     if (0 != xmlMaker.get_xml(tmpStr))
     {
         xmlMaker.get_error(tmpStr);
+        std::cout << tmpStr << std::endl;
+    }
+    else
+    {
         std::cout << tmpStr << std::endl;
     }
 

@@ -16,12 +16,52 @@ int db2xml::XmlMaker::get_xml(std::string& strXml)
     }
 
     int nSize = m_nodeList.size();
-    for (int i = 0; i < nSize; i++)
+    int j = 0;
+    while ( j < nSize)
     {
-        std::cout << m_nodeList[i].strName;
-        std::cout << " : ";
-        std::cout << m_nodeList[i].strXml;
-        std::cout << std::endl;
+        for (int i = nSize - 1; i >= 0; i--)
+        {
+            std::string strSubXml;
+            if (0 != get_subXml(i, strSubXml))
+            {
+                continue;
+            }
+
+            m_nodeList[i].strXml = "<";
+            m_nodeList[i].strXml += m_nodeList[i].strName;
+            m_nodeList[i].strXml += ">";
+            m_nodeList[i].strXml += strSubXml;
+            m_nodeList[i].strXml += "</";
+            m_nodeList[i].strXml += m_nodeList[i].strName;
+            m_nodeList[i].strXml += ">";
+            m_nodeList[i].bIsOk = true;
+        }
+
+        if (m_nodeList[0].bIsOk)
+        {
+            break;
+        }
+
+        j++;
+    }
+    
+    if (m_nodeList[0].bIsOk)
+    {
+        strXml = STR_XML_HEAD;
+        strXml += m_nodeList[0].strXml;
+    }
+    else
+    {
+        m_strError = "unknown error : -1\n";
+        for (int i = 0; i < nSize; i++)
+        {
+            m_strError += m_nodeList[i].strName;
+            m_strError += " : ";
+            m_strError += m_nodeList[i].strXml;
+            m_strError += "\n";
+        }
+
+        return -1;
     }
 
     return 0;
@@ -187,5 +227,30 @@ int db2xml::XmlMaker::subPath2Leaf(const std::string& strSubPath, const std::str
 
     m_nodeList[nParent].subNode.insert(std::pair<const std::string, int>(strSubPath, m_nodeList.size() - 1));
     
+    return 0;
+}
+
+int db2xml::XmlMaker::get_subXml(const int nParent, std::string& strSubXml)
+{
+    if (0 == m_nodeList[nParent].subNode.size())
+    {
+        return -1;
+    }
+
+    Name2NodeItr itr;
+    for (itr = m_nodeList[nParent].subNode.begin(); 
+         itr != m_nodeList[nParent].subNode.end();
+         itr ++)
+    {
+        if (m_nodeList[itr->second].bIsOk)
+        {
+            strSubXml += m_nodeList[itr->second].strXml;
+        }
+        else
+        {
+            return -1;
+        }
+    }
+
     return 0;
 }

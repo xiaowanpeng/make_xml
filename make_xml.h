@@ -1,19 +1,20 @@
 #include <string>
 #include <vector>
 #include <map>
-#include <set>
 #include <iostream>
 
 namespace db2xml
 {
+    const std::string STR_XML_HEAD = "<?xml version=\"1.0\" encoding=\"utf-8\" ?>";
+
     struct Record
     {
         std::string strPath; // A/B/C
         std::string strValue;
     };
 
-    typedef std::map<std::string, int> Name2pNode;
-    typedef std::map<std::string, int>::iterator Name2pNodeItr;
+    typedef std::map<std::string, int> Name2Node;
+    typedef std::map<std::string, int>::iterator Name2NodeItr;
 
     struct Node
     {
@@ -26,7 +27,7 @@ namespace db2xml
 
         std::string strName;
         std::string strXml;
-        Name2pNode subNode;
+        Name2Node subNode;
         bool bIsOk;
     };
 
@@ -47,12 +48,17 @@ namespace db2xml
         int get_error(std::string& strErr);
 
     private:
-        int make_nodelist(const RecordList& recordList);
         int split_string(const std::string& str_src, const char split_ch, StringList& str_dst);
+
+        int make_nodelist(const RecordList& recordList);
+
         int record2nodes(const Record& record);
+
         int subPath2Root(const std::string& strSubPath, int& nParent);
         int subPath2Node(const std::string& strSubPath, int& nParent);
         int subPath2Leaf(const std::string& strSubPath, const std::string& strValue, int& nParent);
+
+        int get_subXml(const int nParent, std::string& strSubXml);
 
     private:
         NodeList m_nodeList;
